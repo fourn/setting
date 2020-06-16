@@ -20,7 +20,8 @@
             "Dcat\\Admin\\Extension\\Fourn\\Setting\\": "src/"
         },
          "files": [
-            "src/bootstrap.php"
+            "src/bootstrap.php",
+            "src/helpers.php"
         ]
     }
 }
