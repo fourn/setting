@@ -10,6 +10,7 @@ use Dcat\Admin\Form;
 use Dcat\Admin\Form\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Fluent;
+use Illuminate\Support\Str;
 
 class SettingForm extends Form
 {
@@ -27,21 +28,44 @@ class SettingForm extends Form
         foreach ($config as $tab => $fields) {
             $this->tab(admin_trans_label($tab), function (SettingForm $form) use ($fields, $tab) {
                 foreach ($fields as $key => $params) {
+
+                    // 允许只配置字段名称
                     if (is_numeric($key) && is_string($params)) {
                         $key = $params;
                         $params = [];
                     }
+
                     $fieldType = isset($params['type']) ? $params['type'] : 'text';
                     $fieldName = $tab . '-' . $key;
+
+                    // 排除掉指定类型的字段
                     unset($params['type']);
+
+                    // 所有表单可用类型
                     if (isset(SettingForm::extensions()[$fieldType])) {
-                        // 创建字段，只需要一个参数的情况，标题会从翻译文件中自动获取
-                        $field = $form->$fieldType($fieldName);
+
+                        $options = [];
+                        if (is_array($params)) {
+                            foreach ($params as $paramKey => $paramItem) {
+                                if (is_numeric($paramKey) && is_array($paramItem)) {
+                                    $options = $paramItem;
+                                    unset($params[$paramKey]);
+                                }
+                            }
+                        }
+
+                        // 创建字段
+                        $field = $form->$fieldType($fieldName, ...$options);
+
                         // 循环能够被链式调用的方法
                         foreach ($params as $paramKey => $paramValue) {
                             if (is_numeric($paramKey) && is_string($paramValue)) {
                                 // 不需要参数
                                 $field->$paramValue();
+                            } elseif (Str::endsWith($paramKey, '...')) {
+                                // 有多个参数
+                                $paramKey = str_replace('...', '', $paramKey);
+                                $field->$paramKey(...$paramValue);
                             } else {
                                 // 有且仅有一个参数
                                 $field->$paramKey($paramValue);
