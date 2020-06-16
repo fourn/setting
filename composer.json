@@ -1,14 +1,14 @@
 {
     "name": "fourn/setting",
-    "description": "description...",
+    "description": "基于 Dcat-Admin 开发的系统配置模块",
     "type": "library",
-    "keywords": ["dcat-admin", "extension"],
+    "keywords": ["dcat-admin", "extension", "setting"],
     "homepage": "https://github.com/fourn/setting",
     "license": "MIT",
     "authors": [
         {
-            "name": "your name",
-            "email": "your email"
+            "name": "fourn",
+            "email": "fourn@foxmail.com"
         }
     ],
     "require": {
