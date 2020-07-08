@@ -11,6 +11,9 @@ if (!function_exists('setting_route')) {
 
 if (!function_exists('setting')) {
     function setting($key, $default = null) {
+        if (is_array($key)) {
+            return DB::table('settings')->whereIn('key', $key)->pluck('value', 'key');
+        }
         if ($value = DB::table('settings')->where('key', $key)->value('value')) {
             return $value;
         } else {
